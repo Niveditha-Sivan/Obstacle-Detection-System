@@ -1,0 +1,90 @@
+#define ePin 12
+#define tPin 13
+#define buzzer A2
+long duration;
+int distance;
+int fwd1 = 9;
+int rev1 = 6;
+int fwd2 = 10;
+int rev2 = 11;
+#include <LiquidCrystal.h>
+const int RS=8, EN=7, D4=5, D5=4, D6=3, D7=2;
+LiquidCrystal lcd(8, 7, 5, 4, 3, 2);
+
+void setup(){
+  pinMode(tPin, OUTPUT);
+  pinMode(ePin, INPUT);
+  Serial.begin(9600);
+  pinMode(fwd1, OUTPUT);
+  pinMode(rev1, OUTPUT);
+  pinMode(fwd2, OUTPUT);
+  pinMode(rev2, OUTPUT);
+  pinMode(buzzer, OUTPUT);
+  lcd.begin(16, 2);
+}
+
+void loop(){
+  digitalWrite(tPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(tPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(tPin, LOW);
+  duration = pulseIn(ePin, HIGH);
+  distance = duration*0.034/2;
+  Serial.print("DISTANCE:");
+  Serial.println(distance);
+  Serial.print("TIME:");
+  Serial.println(duration);
+  
+if (distance >= 20){
+  digitalWrite(fwd2, HIGH);
+  digitalWrite(rev2, LOW);
+  digitalWrite(fwd1, HIGH);
+  digitalWrite(rev1, LOW);
+  lcd.setCursor(0, 0);
+  lcd.print("NOTHING AHEAD");
+  lcd.setCursor(0, 1);
+  lcd.print("MOVING FORWARD");
+  digitalWrite(buzzer,LOW);
+  delay(1000);
+  lcd.clear();
+}
+  
+if (distance <= 19){
+  digitalWrite(fwd2, LOW);
+  digitalWrite(rev2, LOW);
+  digitalWrite(fwd1, LOW);
+  digitalWrite(rev1,LOW);
+  lcd.setCursor(0, 0);
+  lcd.print("SOMETHING AHEAD");
+  lcd.setCursor(0, 1);
+  digitalWrite(buzzer, HIGH);
+  lcd.print("STOP!!!!");
+  delay(5000);
+  lcd.clear();
+  digitalWrite(fwd2, LOW);
+  digitalWrite(rev2, HIGH);
+  digitalWrite(fwd1, LOW);
+  digitalWrite(rev1,HIGH);
+  lcd.setCursor(0, 0);
+  lcd.print("TAKING REVERSE");
+  delay(5000);
+  lcd.clear();
+  digitalWrite(fwd2, LOW);
+  digitalWrite(rev2, LOW);
+  digitalWrite(fwd1, LOW);
+  digitalWrite(rev1,LOW);
+  lcd.setCursor(0, 0);
+  lcd.print("BREAK");
+  delay(3000);
+  lcd.clear();
+  digitalWrite(fwd2, HIGH);
+  digitalWrite(rev2, LOW);
+  digitalWrite(fwd1, LOW);
+  digitalWrite(rev1,LOW);
+  lcd.setCursor(0, 0);
+  lcd.print("TURNING RIGHT");
+  delay(5000);
+  lcd.clear();
+}
+}
